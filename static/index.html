@@ -66,8 +66,35 @@ function sendJSONXMLHTTPRequest(url, objects, callback) {
     xhr.setRequestHeader('Content-Type', 'application/json');
     xhr.setRequestHeader('Accept', 'application/json');
     xhr.send(JSON.stringify(objects));
-    
 }
+
+function getJSONXMLHTTPRequest(url, callback) {
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState==4) {
+            try {
+                if (xhr.status==200) {
+                    //XXX: parse some JSON from the request!
+                    var data = JSON.parse(this.response);
+                    //XXX: Pass the data to the callback!
+                    callback(data);
+                }
+            } 
+            catch(e) {
+                alert('Error: ' + e.name);
+            }
+        }
+    };
+    //XXX: GET to a URL
+    xhr.open("GET", url, true)
+    //XXX: set the mimetype and the accept headers!
+    // Remember to use application/json!
+    xhr.overrideMimeType("application/json");
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.setRequestHeader('Accept', 'application/json');
+    xhr.send();
+}
+
 
 
 world = {};
@@ -290,7 +317,10 @@ mouse.mousedraggers.push(function(x,y,clicked,e) {
 
 function update() {
     //XXX: TODO Get the world from the webservice using a XMLHTTPRequest
-    sendJSONXMLHTTPRequest("/world", null , data => {world=data});
+    // Send get request to /world
+    getJSONXMLHTTPRequest('/world', data=>{
+        world = data;
+    });
     drawFrame();
 }
 
