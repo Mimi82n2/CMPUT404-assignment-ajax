@@ -72,27 +72,38 @@ function sendJSONXMLHTTPRequest(url, objects, callback) {
 
 world = {};
 
+
 //XXX: TODO Make this prettier!
 function drawCircle(context,entity) {
     with(context) {
         beginPath();              
-        lineWidth = 3;
+        lineWidth = 5;
         var x = entity["x"];
         var y = entity["y"];
         //moveTo(x,y);
-        fillStyle = entity["colour"];
+
+        // Use random colors
+        fillStyle = "#"+((1<<24)*Math.random()|0).toString(16);
+        
+        // Lower Opacity
+        globalAlpha = 0.7;
+
         strokeStyle = fillStyle;
-        arc(x, y, (entity["radius"])?entity["radius"]:50, 0, 5.0 * Math.PI, false);  
-        stroke();                                
+        arc(x, y, (entity["radius"])?entity["radius"]:50, 0, 2.0 * Math.PI, false);  
+
+        // Fill circles
+        fill();           
     }
 }
+
+
 
 function prepEntity(entity) {
     if (!entity["colour"]) {
         entity["colour"] = "#FF0000";
     }
     if (!entity["radius"]) {
-        entity["radius"] = 50;
+        entity["radius"] = 20;
     }
     return entity;
 }
@@ -265,7 +276,7 @@ mouse = (function() {
 // Add the application specific mouse listeners!
 //XXX: TODO Make these prettier!
 mouse.mousedowners.push(function(x,y,clicked,e) {
-    addEntityWithoutName({'x':x,'y':y,'colour':'blue'});
+    addEntityWithoutName({'x':x,'y':y,'colour':'blue', 'type':'circle'});
 });
 
 mouse.mouseuppers.push(function(x,y,clicked,e) {
@@ -279,7 +290,7 @@ mouse.mousedraggers.push(function(x,y,clicked,e) {
 
 function update() {
     //XXX: TODO Get the world from the webservice using a XMLHTTPRequest
-    sendJSONXMLHTTPRequest('/world', null, Object.assign(world, data));
+    sendJSONXMLHTTPRequest("/world", null , data => {world=data});
     drawFrame();
 }
 
