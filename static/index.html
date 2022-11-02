@@ -320,7 +320,9 @@ function update() {
     // Send get request to /world
     getJSONXMLHTTPRequest('/world', data=>{
         world = data;
+        
     });
+    drawNextFrame();
     drawFrame();
 }
 
